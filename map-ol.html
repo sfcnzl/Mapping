@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<meta charset="UTF-8">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.min.js" integrity="sha512-1/RvZTcCDEUjY/CypiMz+iqqtaoQfAITmNSJY17Myp4Ms5mdxPS5UV7iOfdZoxcGhzFbOm6sntTKJppjvuhg4g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-latest.min.js" integrity="sha512-vs7+jbztHoMto5Yd/yinM4/y2DOkPLt0fATcN+j+G4ANY2z4faIzZIOMkpBmWdcxt+596FemCh9M18NUJTZwvw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/ol-mapbox-style@12.1.1/dist/olms.js"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v8.2.0/ol.css">
+
+<script> 
+$(document).ready(() => {
+
+	// 			source: new ol.source.OSM(),
+
+	var map = new ol.Map({
+		target: 'map',
+		layers: [
+		],
+		view: new ol.View({
+			center: ol.proj.fromLonLat([173, -44]),
+			zoom: 10,
+		}),
+	});
+
+	setTimeout(() => {
+		olms.apply(map, 'cycleosm.json').then(function () {
+	 		// Map has been successfully styled with Mapbox style
+		});
+	},500);
+});
+</script>
+
+	
+	<body>
+	<div><span>test</span></div>
+	<div id="map" style="width: 100%; height: calc(100vh - 90px);"></div>
+</body>
+</html>
