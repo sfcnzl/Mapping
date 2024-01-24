@@ -1,0 +1,337 @@
+meta 
+{
+    title: "Biking";
+    description: "A style to visualize bicycle access. supplimental to JOSM default map paint style";
+    version: "0.1 2024-01-22";
+    author: "sfcnzl";
+    link: "https://tbc";
+    min-josm-version: "5198";
+}
+
+canvas
+{
+    fill-color: #606060;
+}
+node
+{
+	color: none;
+    symbol-shape: square;
+    symbol-size: 2;
+    symbol-stroke-color: lightgrey;
+    symbol-stroke-opacity: 0.1;
+}
+node:connection
+{
+	color: none;
+    symbol-shape: square;
+    symbol-size: 2;
+    symbol-stroke-color: white;
+    symbol-stroke-opacity: 0.2;
+}
+
+way[highway]
+{
+	color: darkgrey;
+	opacity: 1.0;
+
+	error-color: #9370DB;
+
+	motorway-color: #FB805F;
+	trunk-color: #FB805F;
+	trunk-width: 4;
+	primary-color: #FDBF6F;
+	primary-width: 3;
+	secondary-color: #FDBF6F;
+	tertiary-color: #F7F496;
+	unclassified-color: #FFFFFF;
+	residential-color: #FFFFFF;
+	residential-width: 2;
+	track-color: #6E541C;
+	track-width: 2;
+
+	cycleway-weakinfo-color: #189DFF;
+	cycleway-weakinfo-width: 1.5;
+	cycleway-color: #4100ff;
+	cycleway-width: 2.0;
+	cyclelane-width: 1.5;
+
+	mtb-scale-1-casingcolor: green;
+	mtb-scale-2-casingcolor: #189DFF;
+	mtb-scale-3-casingcolor: blue;
+	mtb-scale-4-casingcolor: black;
+	mtb-scale-5-casingcolor: red;
+	mtb-scale-casingwidth: 1.5;
+}
+
+way[highway=motorway]
+{
+	color: eval(prop("motorway-color"));
+	width: eval(prop("trunk-width"));
+}
+
+way[highway=trunk]
+{
+	color: eval(prop("trunk-color"));
+	width: eval(prop("trunk-width"));
+}
+
+way[highway=primary]
+{
+	color: eval(prop("primary-color"));
+	width: eval(prop("primary-width"));
+}
+
+way[highway=secondary]
+{
+	color: eval(prop("secondary-color"));
+	width: eval(prop("primary-width"));
+}
+
+way[highway=tertiary]
+{
+	color: eval(prop("tertiary-color"));
+	width: eval(prop("primary-width"));
+}
+
+way[highway=residential],
+way[highway=road]
+{
+	color: eval(prop("residential-color"));
+	width: eval(prop("residential-width"));
+}
+
+way[highway=unclassified]
+{
+	color: eval(prop("unclassified-color"));
+	width: eval(prop("residential-width"));
+}
+
+way[highway=track]
+{
+	color: eval(prop("track-color"));
+	width: eval(prop("track-width"));
+}
+
+way[highway=motorway][bicycle=yes],
+way[highway=trunk][bicycle=yes],
+way[highway=primary][bicycle=yes],
+way[highway=secondary][bicycle=yes],
+way[highway=tertiary][bicycle=yes],
+way[highway=residential][bicycle=yes],
+way[highway=road][bicycle=yes],
+way[highway=unclassified][bicycle=yes]
+{
+	casing-color: eval(prop("cycleway-color"));
+	casing-width: eval(prop("cycleway-width"));
+}
+
+way[highway=trunk][!bicycle][!access],
+way[highway=primary][!bicycle][!access],
+way[highway=secondary][!bicycle][!access],
+way[highway=tertiary][!bicycle][!access],
+way[highway=residential][!bicycle][!access],
+way[highway=road][!bicycle][!access],
+way[highway=unclassified][!bicycle][!access],
+way[highway=trunk][!bicycle][access=yes],
+way[highway=primary][!bicycle][access=yes],
+way[highway=secondary][!bicycle][access=yes],
+way[highway=tertiary][!bicycle][access=yes],
+way[highway=residential][!bicycle][access=yes],
+way[highway=road][!bicycle][access=yes],
+way[highway=unclassified][!bicycle][access=yes]
+{
+	casing-color: eval(prop("cycleway-weakinfo-color"));
+	casing-width: eval(prop("cycleway-weakinfo-width"));
+	casing-dashes: list(6,6);
+}
+
+way[highway=track],
+way[highway=path]
+{
+	color: eval(prop("track-color"));
+	width: eval(prop("track-width"));
+	dashes: list(20,10);
+	z-index: 99;
+}
+
+way[highway=track][access=no],
+way[highway=path][access=no],
+way[highway=track][access=private],
+way[highway=path][access=private],
+way[highway=track][bicycle=no],
+way[highway=path][bicycle=no]
+{
+	dashes-background-color: red;
+	z-index: 99;
+}
+
+way[highway=track][bicycle=yes][!access],
+way[highway=path][bicycle=yes][!access]
+way[highway=track][bicycle=yes][access=yes],
+way[highway=path][bicycle=yes][access=yes],
+way[highway=track][bicycle=yes][access=permissive],
+way[highway=path][bicycle=yes][access=permissive],
+way[highway=track][bicycle=permissive][!access],
+way[highway=path][bicycle=permissive][!access]
+way[highway=track][bicycle=permissive][access=yes],
+way[highway=path][bicycle=permissive][access=yes],
+way[highway=track][bicycle=permissive][access=permissive],
+way[highway=path][bicycle=permissive][access=permissive],
+way[highway=track][bicycle=designated][!access],
+way[highway=path][bicycle=designated][!access]
+way[highway=track][bicycle=designated][access=yes],
+way[highway=path][bicycle=designated][access=yes],
+way[highway=track][bicycle=designated][access=permissive],
+way[highway=path][bicycle=designated][access=permissive],
+way[highway=track][bicycle=mtb][!access],
+way[highway=path][bicycle=mtb][!access]
+way[highway=track][bicycle=mtb][access=yes],
+way[highway=path][bicycle=mtb][access=yes],
+way[highway=track][bicycle=mtb][access=permissive],
+way[highway=path][bicycle=mtb][access=permissive]
+{
+	width: eval(prop("track-width"));
+	dashes-background-color: eval(prop("cycleway-color"));
+	z-index: 99;
+}
+
+way[highway=track][bicycle=designated][!access],
+way[highway=path][bicycle=designated][!access]
+way[highway=track][bicycle=designated][access=yes],
+way[highway=path][bicycle=designated][access=yes]
+{
+	color: eval(prop("cycleway-color"));
+	width: eval(prop("track-width"));
+}
+
+
+way[highway=track][bicycle=mtb][tracktype=grade0],
+way[highway=path][bicycle=mtb][tracktype=grade0],
+way[highway=track][bicycle=yes][tracktype=grade0],
+way[highway=path][bicycle=yes][tracktype=grade0],
+way[highway=track][bicycle=mtb][tracktype=grade1],
+way[highway=path][bicycle=mtb][tracktype=grade1],
+way[highway=track][bicycle=yes][tracktype=grade1],
+way[highway=path][bicycle=yes][tracktype=grade1]
+{
+	casing-color: eval(prop("mtb-scale-1-casingcolor"));
+	casing-width: eval(prop("mtb-scale-casingwidth"));
+	casing-dashes: none;
+}
+
+way[highway=track][bicycle=yes][tracktype=grade2],
+way[highway=path][bicycle=yes][tracktype=grade2]
+way[highway=track][bicycle=mtb][tracktype=grade2],
+way[highway=path][bicycle=mtb][tracktype=grade2]
+{
+	casing-color: eval(prop("mtb-scale-2-casingcolor"));
+	casing-width: eval(prop("mtb-scale-casingwidth"));
+	casing-dashes: none;
+}
+
+way[highway=track][bicycle=yes][tracktype=grade3],
+way[highway=path][bicycle=yes][tracktype=grade3]
+way[highway=track][bicycle=mtb][tracktype=grade3],
+way[highway=path][bicycle=mtb][tracktype=grade3]
+{
+	casing-color: eval(prop("mtb-scale-3-casingcolor"));
+	casing-width: eval(prop("mtb-scale-casingwidth"));
+	casing-dashes: none;
+}
+
+way[highway=track][bicycle=yes][tracktype=grade4],
+way[highway=path][bicycle=yes][tracktype=grade4]
+way[highway=track][bicycle=mtb][tracktype=grade4],
+way[highway=path][bicycle=mtb][tracktype=grade4]
+{
+	casing-color: eval(prop("mtb-scale-4-casingcolor"));
+	casing-width: eval(prop("mtb-scale-casingwidth"));
+	casing-dashes: none;
+}
+
+way[highway=track][bicycle=yes][tracktype=grade5],
+way[highway=path][bicycle=yes][tracktype=grade5]
+way[highway=track][bicycle=mtb][tracktype=grade5],
+way[highway=path][bicycle=mtb][tracktype=grade5]
+{
+	casing-color: eval(prop("mtb-scale-5-casingcolor"));
+	casing-width: eval(prop("mtb-scale-casingwidth"));
+	casing-dashes: none;
+}
+
+way[mtb:scale=0],
+way[mtb:scale=1],
+way[mtb:scale:nz=0],
+way[mtb:scale:nz=1],
+way[mtb:scale:imba=0],
+way[mtb:scale:imba=1]
+{
+	casing-color: eval(prop("mtb-scale-1-casingcolor"));
+	casing-width: eval(prop("mtb-scale-casingwidth"));
+	casing-dashes: none;
+}
+
+way[mtb:scale=2],
+way[mtb:scale:nz=2],
+way[mtb:scale:imba=2]
+{
+	casing-color: eval(prop("mtb-scale-2-casingcolor"));
+	casing-width: eval(prop("mtb-scale-casingwidth"));
+	casing-dashes: none;
+}
+
+way[mtb:scale=3],
+way[mtb:scale:nz=3],
+way[mtb:scale:imba=3]
+{
+	casing-color: eval(prop("mtb-scale-3-casingcolor"));
+	casing-width: eval(prop("mtb-scale-casingwidth"));
+	casing-dashes: none;
+}
+
+way[mtb:scale=4],
+way[mtb:scale:nz=4],
+way[mtb:scale:imba=4]
+{
+	casing-color: eval(prop("mtb-scale-4-casingcolor"));
+	casing-width: eval(prop("mtb-scale-casingwidth"));
+	casing-dashes: none;
+}
+
+way[mtb:scale=5],
+way[mtb:scale:nz=5],
+way[mtb:scale:imba=5]
+{
+	casing-color: eval(prop("mtb-scale-5-casingcolor"));
+	casing-width: eval(prop("mtb-scale-casingwidth"));
+	casing-dashes: none;
+}
+
+way[highway=motorway][access=no],
+way[highway=trunk][access=no],
+way[highway=primary][access=no],
+way[highway=secondary][access=no],
+way[highway=tertiary][access=no],
+way[highway=residential][access=no],
+way[highway=road][access=no],
+way[highway=unclassified][access=no]
+{
+	casing-color: red;
+	casing-width: eval(prop("cycleway-weakinfo-width"));
+	casing-dashes: list(6,6);
+}
+
+way[bicycle=mtb]
+{
+	color: eval(prop("error-color"));
+	casing-color: eval(prop("error-color"));
+}
+
+node[bicycle]
+{
+	color: none;
+    symbol-shape: square;
+    symbol-size: 10;
+    symbol-stroke-color: eval(prop("error-color"));
+    symbol-stroke-opacity: 1;
+}

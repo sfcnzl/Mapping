@@ -1,0 +1,51 @@
+<html>
+  <head>
+
+    <!--Check for a newer version if you add the MapLibre GL library that way-->
+    <script src="https://unpkg.com/maplibre-gl@1.13.0-rc.3/dist/mapbox-gl.js"></script>
+    <link
+      href="https://unpkg.com/maplibre-gl@1.13.0-rc.3/dist/mapbox-gl.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+  <style>
+	body {
+	  margin: 0;
+	  padding: 0;
+	}
+
+	#my-map {
+	  position: absolute;
+	  top: 0;
+	  bottom: 0;
+	  width: 100%;
+	}
+</style>
+    <div id="my-map"></div>
+    <script defer> 
+		setTimeout(() => {
+			window.map = new mapboxgl.Map({
+				container: 'my-map',
+				style: `cycleosm.json`,
+				center: [-74.5, 40],
+				logoPosition: 'bottom-left',
+				navigationControl: {
+					showZoom: true,
+					showCompass: true
+				},
+				scaleControl: {
+					maxWidth: 80,
+					unit: 'imperial' // 'metric' or 'imperial'
+				}
+			});
+
+			setTimeout(() => {
+					window.map.setZoom(14);
+					window.map.setCenter({ lng: 172.8629141316717, lat: -43.74487722191533 });
+				},1000);
+		},500);
+		</script>
+  </body>
+</html>
