@@ -1,6 +1,7 @@
 {
   "version": 8,
-  "name": "CycleOSM_SFC",
+  "name": "CycleOSM_SC",
+  "id": "cyclosm",
 "metadata": {
     "maputnik:license": "https://github.com/maputnik/osm-liberty/blob/gh-pages/LICENSE.md",
     "maputnik:renderer": "mbgljs",
@@ -8,8 +9,9 @@
   },
   "sources": {
     "openmaptiles": {
+
       "type": "vector",
-      "url": "https://api.maptiler.com/tiles/v3/tiles.json?key={Your_API_Key} "
+      "url": "https://api.maptiler.com/tiles/v3/tiles.json?key=4UIdWP8ZRU7fVe4dnNjf "
     },
     "natural_earth_shaded_relief": {
       "maxzoom": 6,
@@ -363,6 +365,49 @@
         "line-width": {"base": 1.5, "stops": [[11, 4], [17, 50]]}
       }
     },
+	{
+      "id": "road_track",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "transportation",
+	  "minzoom": 1,
+      "filter": [
+        "all",
+		["==", "$type", "LineString"],
+		["in", "class", "track"]
+      ],
+      "layout": {
+        "line-cap": "square",
+        "line-join": "bevel",
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "#FFF",
+        "line-width": {"base": 1.4, "stops": [[6, 0.25], [20, 10]]}
+      }
+    },
+	{
+      "id": "road_path",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "transportation",
+	  "minzoom": 1,
+      "filter": [
+        "all",
+		["==", "$type", "LineString"],
+		["in", "class", "path"]
+      ],
+      "layout": {
+        "line-cap": "square",
+        "line-join": "bevel",
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "#6E541C",
+        "line-dasharray": [3, 3],
+        "line-width": {"base": 1.55, "stops": [[4, 1], [20, 10]]}
+      }
+    },
     {
       "id": "road_trunk_primary",
       "type": "line",
@@ -586,7 +631,254 @@
         "line-width": {"base": 1.3, "stops": [[3, 0.5], [22, 15]]}
       }
     },
-    {
+	{
+      "id": "road_cycleway_assumed",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "transportation",
+	  "minzoom": 1,
+      "filter": [
+        "all",
+		["==", "$type", "LineString"],
+		["in", "class", "trunk", "primary", "secondary", "tertiary","minor","residential"],
+		[
+			"any",
+			[
+				"all",
+				[
+					"any",
+					["!has", "access"],
+					["in", "access", "yes","permissive"]
+				],
+				["!has", "bicycle"]
+			],
+			[
+				"all",
+				["!has", "access"],
+				[
+				  "any",
+				  ["==", "subclass", "cycleway"],
+				  ["in", "bicycle", "yes", 1, "designated", "mtb", "permissive"]
+				]
+			]
+		]
+      ],
+      "layout": {
+        "line-cap": "square",
+        "line-join": "bevel",
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "#189DFF",
+        "line-dasharray": [3, 3],
+        "line-width": {"base": 1.55, "stops": [[4, 1], [20, 10]]},
+		"line-gap-width": {"base": 1.55, "stops": [[4, 1], [20, 5]]}
+      }
+    },
+	{
+      "id": "road_track_path_cycleway_assumed",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "transportation",
+	  "minzoom": 1,
+      "filter": [
+        "all",
+		["==", "$type", "LineString"],
+		["in", "class", "track","path"],
+		[
+			"any",
+			[
+				"all",
+				[
+					"any",
+					["!has", "access"],
+					["in", "access", "yes","permissive"]
+				],
+				["!has", "bicycle"]
+			],
+			[
+				"all",
+				["!has", "access"],
+				[
+				  "any",
+				  ["==", "subclass", "cycleway"],
+				  ["in", "bicycle", "yes", 1, "designated", "mtb", "permissive"]
+				]
+			]
+		]
+      ],
+      "layout": {
+        "line-cap": "square",
+        "line-join": "bevel",
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "#189DFF",
+        "line-dasharray": [3, 3],
+        "line-width": {"base": 1.55, "stops": [[4, 1], [20, 10]]},
+		"line-gap-width": {"base": 1.55, "stops": [[4, 1], [20, 5]]}
+      }
+    },
+	{
+      "id": "road_motorway_cycleway",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "transportation",
+	  "minzoom": 1,
+      "filter": [
+        "all",
+		["==", "$type", "LineString"],
+		["in", "class", "motorway"],
+        ["in", "access", "yes","permissive"],
+        [
+          "any",
+          ["==", "subclass", "cycleway"],
+          ["in", "bicycle", "yes", 1, "designated", "mtb", "permissive"]
+        ]
+      ],
+      "layout": {
+        "line-cap": "square",
+        "line-join": "bevel",
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "#00F",
+        "line-width": {"base": 1.55, "stops": [[4, 1], [20, 10]]},
+		"line-gap-width": {"base": 1.55, "stops": [[4, 1], [20, 5]]}
+      }
+    },
+	{
+      "id": "road_trunk_primary_cycleway",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "transportation",
+	  "minzoom": 1,
+      "filter": [
+        "all",
+		["==", "$type", "LineString"],
+		["in", "class", "trunk","primary"],
+        ["in", "access", "yes","permissive"],
+        [
+          "any",
+          ["==", "subclass", "cycleway"],
+          ["in", "bicycle", "yes", 1, "designated", "mtb", "permissive"]
+        ]
+      ],
+      "layout": {
+        "line-cap": "square",
+        "line-join": "bevel",
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "#00F",
+		"line-gap-width": {"base": 1.55, "stops": [[4, 1], [20, 5]]}
+      }
+    },
+	{
+      "id": "road_secondary_tertiary_cycleway",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "transportation",
+	  "minzoom": 1,
+      "filter": [
+        "all",
+		["==", "$type", "LineString"],
+		["in", "class", "secondary", "tertiary"],
+        ["in", "access", "yes","permissive"],
+        [
+          "any",
+          ["==", "subclass", "cycleway"],
+          ["in", "bicycle", "yes", 1, "designated", "mtb", "permissive"]
+        ]
+      ],
+      "layout": {
+        "line-cap": "square",
+        "line-join": "bevel",
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "#00F",
+        "line-width": {"base": 1.55, "stops": [[4, 1], [20, 10]]},
+		"line-gap-width": {"base": 1.55, "stops": [[4, 1], [20, 5]]}
+      }
+    },
+	{
+      "id": "road_track_path_cycleway",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "transportation",
+	  "minzoom": 1,
+      "filter": [
+        "all",
+		["==", "$type", "LineString"],
+		["in", "class", "track", "path"],
+        ["in", "access", "yes","permissive"],
+        [
+          "any",
+          ["==", "subclass", "cycleway"],
+          ["in", "bicycle", "yes", 1, "designated", "mtb", "permissive"]
+        ]
+      ],
+      "layout": {
+        "line-cap": "square",
+        "line-join": "bevel",
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "#00F",
+        "line-width": {"base": 1.55, "stops": [[4, 1], [20, 10]]},
+		    "line-gap-width": {"base": 1.55, "stops": [[4, 1], [20, 5]]}
+      }
+    },
+	{
+      "id": "road_cycleway",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "transportation",
+	  "minzoom": 1,
+      "filter": [
+        "all",
+		["==", "$type", "LineString"],
+        ["in", "access", "yes","permissive"],
+        [
+          "any",
+          ["==", "subclass", "cycleway"],
+          ["in", "bicycle", "yes", 1, "designated", "mtb", "permissive"]
+        ]
+      ],
+      "layout": {
+        "line-cap": "square",
+        "line-join": "bevel",
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "#00F",
+        "line-width": {"base": 1.55, "stops": [[4, 1], [20, 10]]}
+      }
+    },
+	{
+      "id": "bicycle_mtb_error",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "transportation",
+	  "minzoom": 1,
+      "filter": [
+        "all",
+		["==", "$type", "LineString"],
+		["in", "bicycle", "mtb"]
+      ],
+      "layout": {
+        "line-cap": "square",
+        "line-join": "bevel",
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "#9370DB",
+        "line-dasharray": [3, 3],
+        "line-width": {"base": 1.55, "stops": [[4, 1], [20, 10]]}
+      }
+    },
+	{
       "id": "poi_label",
       "type": "symbol",
       "source": "openmaptiles",
@@ -783,7 +1075,8 @@
         "text-halo-color": "#ffffff",
         "text-halo-width": 1
       }
-    }, {
+    }, 
+	{
       "id": "amenities-bicycle_parking",
       "type": "circle",
       "source": "openmaptiles",
@@ -799,208 +1092,6 @@
         "circle-radius": 4,
         "circle-color": "rgba(0, 0, 255, 1)"
       }
-    },
-	{
-      "id": "road_cycleway_assumed",
-      "type": "line",
-      "source": "openmaptiles",
-      "source-layer": "transportation",
-	  "minzoom": 1,
-      "filter": [
-        "all",
-		["==", "$type", "LineString"],
-		["in", "class", "trunk", "primary", "secondary", "tertiary","minor","residential"],
-        ["!has", "bicycle"]
-      ],
-      "layout": {
-        "line-cap": "square",
-        "line-join": "bevel",
-        "visibility": "visible"
-      },
-      "paint": {
-        "line-color": "#189DFF",
-        "line-dasharray": [3, 3],
-        "line-width": {"base": 1.55, "stops": [[4, 1], [20, 10]]},
-		"line-gap-width": {"base": 1.55, "stops": [[4, 1], [20, 5]]}
-      }
-    },
-	{
-      "id": "road_motorway_cycleway",
-      "type": "line",
-      "source": "openmaptiles",
-      "source-layer": "transportation",
-	  "minzoom": 1,
-      "filter": [
-        "all",
-		["==", "$type", "LineString"],
-		["in", "class", "motorway"],
-        [
-          "any",
-          ["==", "subclass", "cycleway"],
-          ["in", "bicycle", "yes", 1, "designated", "mtb"]
-        ]
-      ],
-      "layout": {
-        "line-cap": "square",
-        "line-join": "bevel",
-        "visibility": "visible"
-      },
-      "paint": {
-        "line-color": "#00F",
-        "line-width": {"base": 1.55, "stops": [[4, 1], [20, 10]]},
-		"line-gap-width": {"base": 1.55, "stops": [[4, 1], [20, 5]]}
-      }
-    },
-	{
-      "id": "road_trunk_primary_cycleway",
-      "type": "line",
-      "source": "openmaptiles",
-      "source-layer": "transportation",
-	  "minzoom": 1,
-      "filter": [
-        "all",
-		["==", "$type", "LineString"],
-		["in", "class", "trunk","primary"],
-        [
-          "any",
-          ["==", "subclass", "cycleway"],
-          ["in", "bicycle", "yes", 1, "designated", "mtb"]
-        ]
-      ],
-      "layout": {
-        "line-cap": "square",
-        "line-join": "bevel",
-        "visibility": "visible"
-      },
-      "paint": {
-        "line-color": "#00F",
-		"line-gap-width": {"base": 1.55, "stops": [[4, 1], [20, 5]]}
-      }
-    },
-	{
-      "id": "road_secondary_tertiary_cycleway",
-      "type": "line",
-      "source": "openmaptiles",
-      "source-layer": "transportation",
-	  "minzoom": 1,
-      "filter": [
-        "all",
-		["==", "$type", "LineString"],
-		["in", "class", "secondary", "tertiary"],
-        [
-          "any",
-          ["==", "subclass", "cycleway"],
-          ["in", "bicycle", "yes", 1, "designated", "mtb"]
-        ]
-      ],
-      "layout": {
-        "line-cap": "square",
-        "line-join": "bevel",
-        "visibility": "visible"
-      },
-      "paint": {
-        "line-color": "#00F",
-        "line-width": {"base": 1.55, "stops": [[4, 1], [20, 10]]},
-		"line-gap-width": {"base": 1.55, "stops": [[4, 1], [20, 5]]}
-      }
-    },
-	
-	{
-      "id": "road_track_path",
-      "type": "line",
-      "source": "openmaptiles",
-      "source-layer": "transportation",
-	  "minzoom": 1,
-      "filter": [
-        "all",
-		["==", "$type", "LineString"],
-		["in", "class", "path","track"]
-      ],
-      "layout": {
-        "line-cap": "square",
-        "line-join": "bevel",
-        "visibility": "visible"
-      },
-      "paint": {
-        "line-color": "#6E541C",
-        "line-dasharray": [3, 3],
-        "line-width": {"base": 1.55, "stops": [[4, 1], [20, 10]]}
-      }
-    },
-	{
-      "id": "road_track_path_cycleway",
-      "type": "line",
-      "source": "openmaptiles",
-      "source-layer": "transportation",
-	  "minzoom": 1,
-      "filter": [
-        "all",
-		["==", "$type", "LineString"],
-		["in", "class", "track", "path"],
-        [
-          "any",
-          ["==", "subclass", "cycleway"],
-          ["in", "bicycle", "yes", 1, "designated", "mtb"]
-        ]
-      ],
-      "layout": {
-        "line-cap": "square",
-        "line-join": "bevel",
-        "visibility": "visible"
-      },
-      "paint": {
-        "line-color": "#00F",
-        "line-width": {"base": 1.55, "stops": [[4, 1], [20, 10]]},
-		"line-gap-width": {"base": 1.55, "stops": [[4, 1], [20, 5]]}
-      }
-    },
-	{
-      "id": "road_cycleway",
-      "type": "line",
-      "source": "openmaptiles",
-      "source-layer": "transportation",
-	  "minzoom": 1,
-      "filter": [
-        "all",
-		["==", "$type", "LineString"],
-        [
-          "any",
-          ["==", "subclass", "cycleway"],
-          ["in", "bicycle", "yes", 1, "designated", "mtb"]
-        ]
-      ],
-      "layout": {
-        "line-cap": "square",
-        "line-join": "bevel",
-        "visibility": "visible"
-      },
-      "paint": {
-        "line-color": "#00F",
-        "line-width": {"base": 1.55, "stops": [[4, 1], [20, 10]]}
-      }
-    },
-	{
-      "id": "bicycle_mtb_error",
-      "type": "line",
-      "source": "openmaptiles",
-      "source-layer": "transportation",
-	  "minzoom": 1,
-      "filter": [
-        "all",
-		["==", "$type", "LineString"],
-		["in", "bicycle", "mtb"]
-      ],
-      "layout": {
-        "line-cap": "square",
-        "line-join": "bevel",
-        "visibility": "visible"
-      },
-      "paint": {
-        "line-color": "#9370DB",
-        "line-dasharray": [3, 3],
-        "line-width": {"base": 1.55, "stops": [[4, 1], [20, 10]]}
-      }
     }
-  ],
-  "id": "cyclosm"
+  ]
 }
