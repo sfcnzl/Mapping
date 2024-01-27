@@ -13,6 +13,7 @@
 $(document).ready(() => {
 
 	// 			source: new ol.source.OSM(),
+	console.log("osm",new ol.source.OSM());
 
 	var map = new ol.Map({
 		target: 'map',
@@ -23,6 +24,73 @@ $(document).ready(() => {
 			zoom: 10,
 		}),
 	});
+	window.map = map;
+	
+	// Create a vector source and layer
+				var vectorSource = new ol.source.Vector();
+				var vectorLayer = new ol.layer.Vector({
+					source: vectorSource,
+				});
+
+				map.addLayer(vectorLayer);
+
+				// Function to update data based on the current viewport
+        function updateData() {
+          // Get the bounding box from the current viewport
+          var extent = map.getView().calculateExtent(map.getSize());
+          var boundingBox = ol.proj.transformExtent(extent, 'EPSG:3857', 'EPSG:4326');
+		  
+		  var lat_min = boundingBox[1];
+		  var lat_max = boundingBox[3];
+		  var long_min = boundingBox[0];
+		  var long_max = boundingBox[2];
+		  
+		  debugger;
+		  
+		  if (lat_max < lat_min) {
+			lat_min = boundingBox[3];
+			lat_max = boundingBox[1];
+		  }
+		  if (long_max <  long_min) {
+			long_min = boundingBox[2];
+			long_max = boundingBox[0];
+		  }
+
+          // Use Overpass API to fetch data
+          var overpassUrl = 'https://overpass-api.de/api/interpreter';
+          var overpassQuery = '[out:json];way["route"="mtb"](bbox:' +
+                    lat_min + ',' + long_min + ',' +
+                    lat_max + ',' + long_max +
+                    ');out body;';
+	
+		console.log("Query", overpassQuery);
+          $.ajax({
+            method: 'POST',
+            url: overpassUrl,
+            data: {
+              data: overpassQuery,
+            },
+            success: function (data) {
+				console.log("overpass", data);
+
+              // Clear previous features
+              vectorSource.clear();
+
+              // Process Overpass API response and create features
+              var features = new ol.format.GeoJSON().readFeatures(data);
+              vectorSource.addFeatures(features);
+            },
+			error: function (data) {
+				console.log("op error", data);
+			},
+          });
+        }
+
+        // Add an event listener for map view changes
+        map.on('moveend', updateData);
+
+        // Initial data update
+        updateData();
 
 	setTimeout(() => {
 		olms.apply(map, 'cycleosm.json').then(function () {
