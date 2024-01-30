@@ -1,38 +1,114 @@
 <!DOCTYPE html>
 <html>
-	<meta charset="UTF-8">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.min.js" integrity="sha512-1/RvZTcCDEUjY/CypiMz+iqqtaoQfAITmNSJY17Myp4Ms5mdxPS5UV7iOfdZoxcGhzFbOm6sntTKJppjvuhg4g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-latest.min.js" integrity="sha512-vs7+jbztHoMto5Yd/yinM4/y2DOkPLt0fATcN+j+G4ANY2z4faIzZIOMkpBmWdcxt+596FemCh9M18NUJTZwvw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.min.js" integrity="sha512-1/RvZTcCDEUjY/CypiMz+iqqtaoQfAITmNSJY17Myp4Ms5mdxPS5UV7iOfdZoxcGhzFbOm6sntTKJppjvuhg4g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/osmtogeojson@3.0.0-beta.5/osmtogeojson.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v8.2.0/ol.css">
+</head>
+<body>
+    <div id="map" style="width: 100%; height: calc(100vh - 90px);"></div>
 
-	<script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/ol-mapbox-style@12.1.1/dist/olms.js"></script>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v8.2.0/ol.css">
+    <script>
+        $(document).ready(() => {
 
-<script> 
-$(document).ready(() => {
+            var k = '(relation["route"="mtb"];);';
 
-	// 			source: new ol.source.OSM(),
-	console.log("osm",new ol.source.OSM());
+            var map = new ol.Map({
+                target: 'map',
+                layers: [
+					new ol.layer.Tile({
+					  source: new ol.source.OSM()
+					}),
+                ],
+                view: new ol.View({
+                    center: ol.proj.fromLonLat([173, -44]),
+                    zoom: 10,
+                }),
+            });
+            window.map = map;
 
-	var map = new ol.Map({
-		target: 'map',
-		layers: [
-		],
-		view: new ol.View({
-			center: ol.proj.fromLonLat([173, -44]),
-			zoom: 10,
-		}),
-	});
-	window.map = map;
-	
-	// Create a vector source and layer
-				var vectorSource = new ol.source.Vector();
-				var vectorLayer = new ol.layer.Vector({
-					source: vectorSource,
-				});
+            var styleFunction = function (feature) {
+                //debugger;
+                if (feature.getProperties().route=="mtb") {
+                    if (feature.getGeometry().getType() === 'LineString') {
+                        return new ol.style.Style({
+                            stroke: new ol.style.Stroke({
+                                color: 'blue',
+                                width: 2,
+                                //lineDash: [5, 5], // Adjust lineDash for zigzag effect
+                            }),
+                        });
+                    }
+                } else {
+                    if (feature.getGeometry().getType() === 'LineString') {
+                        return new ol.style.Style({
+                            stroke: new ol.style.Stroke({
+                                color: 'green',
+                                width: 2,
+                                lineDash: [5, 5], // Adjust lineDash for zigzag effect
+                            }),
+                        });
+                    } else if (feature.getGeometry().getType() === 'Point') {
+                        return new ol.style.Style({
+                        image: new ol.style.Circle({
+                            radius: 10,
+                            fill: new ol.style.Fill({
+                                color: 'green',
+                            }),
+                            stroke: new ol.style.Stroke({
+                                color: 'blue',
+                                width: 2,
+                            }),
+                        }),
+                    });
+                    }
+                }
+            };
 
-				map.addLayer(vectorLayer);
+            var styleFunctionDot = function (feature) {
+                console.log("id",feature.get('id'));
+                console.log("geo",feature.getGeometry());
+                if (feature.getProperties().route=="mtb") {
+                    console.log("mtb");
+                }
+                // Check if the feature is a LineString
+                if (feature.getGeometry().getType() === 'LineString') {
+                    console.log("ls");
+                    return new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                            color: 'blue',
+                            width: 2,
+                            //lineDash: [5, 5], // Adjust lineDash for zigzag effect
+                        }),
+                    });
+                } else {
+                    console.log("p");
+                    // Default style for other geometry types (e.g., Point)
+                    return new ol.style.Style({
+                        image: new ol.style.Circle({
+                            radius: 10,
+                            fill: new ol.style.Fill({
+                                color: 'red',
+                            }),
+                            stroke: new ol.style.Stroke({
+                                color: 'blue',
+                                width: 2,
+                            }),
+                        }),
+                    });
+                }
+            };
+
+            // Create a vector source and layer
+            var vectorSource = new ol.source.Vector();
+            var vectorLayer = new ol.layer.Vector({
+                source: vectorSource,
+                style: styleFunctionDot,
+            });
+
 
 				// Function to update data based on the current viewport
         function updateData() {
@@ -44,10 +120,9 @@ $(document).ready(() => {
 		  var lat_max = boundingBox[3];
 		  var long_min = boundingBox[0];
 		  var long_max = boundingBox[2];
-		  
-		  debugger;
-		  
-		  if (lat_max < lat_min) {
+
+		//   if (lat_max < lat_min || (lat_max < 0 && lat_min < 0)) {
+		if (lat_max < lat_min ) {
 			lat_min = boundingBox[3];
 			lat_max = boundingBox[1];
 		  }
@@ -58,12 +133,13 @@ $(document).ready(() => {
 
           // Use Overpass API to fetch data
           var overpassUrl = 'https://overpass-api.de/api/interpreter';
-          var overpassQuery = '[out:json];way["route"="mtb"](bbox:' +
+          var overpassQuery = '[out:json][bbox:' +
                     lat_min + ',' + long_min + ',' +
                     lat_max + ',' + long_max +
-                    ');out body;';
+                    '];' + k + 'out body;>;out skel qt;';
 	
 		console.log("Query", overpassQuery);
+		
           $.ajax({
             method: 'POST',
             url: overpassUrl,
@@ -73,12 +149,62 @@ $(document).ready(() => {
             success: function (data) {
 				console.log("overpass", data);
 
-              // Clear previous features
-              vectorSource.clear();
+				// Clear previous features
+				vectorSource.clear();
 
-              // Process Overpass API response and create features
-              var features = new ol.format.GeoJSON().readFeatures(data);
-              vectorSource.addFeatures(features);
+			  	var geoJSONFormat = new ol.format.GeoJSON();
+			  	geojsondata = osmtogeojson( data )
+
+              	// Process Overpass API response and create features
+				var wayFeatures = geoJSONFormat.readFeatures(geojsondata);
+				 wayFeatures.forEach(w=> 
+				 	{
+                        w.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+				 		w.setStyle( styleFunctionDot(w));
+				 });
+
+				//data.getElementsByTagName("relation").forEach(function (relation) {						  });
+
+				console.log("geojsondata", geojsondata);
+				console.log("wayFeatures", wayFeatures);
+				vectorSource.addFeatures(wayFeatures);
+
+                // Create a GeoJSON feature
+                var geoJsonFeature = {
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Point',
+                        coordinates: ol.proj.fromLonLat([173, -44]),
+                    },
+                };
+
+                // Add the GeoJSON feature to the vector source
+                var geoJsonFormat = new ol.format.GeoJSON();
+                //vectorSource.addFeature(geoJsonFormat.readFeature(geoJsonFeature));
+
+                geoJsonFeature = {
+                    type: 'Feature',
+                    geometry: {
+                        type: 'LineString',
+                        coordinates: [
+                            ol.proj.fromLonLat([172, -44]),
+                            ol.proj.fromLonLat([173, -44]), // Add more coordinates as needed
+                            ol.proj.fromLonLat([172.5, -43.8]),
+                            // Add additional zigzag coordinates as needed
+                        ],
+                    },
+                    properties: {
+                        style: {
+                            stroke: new ol.style.Stroke({
+                                color: 'yellow',
+                                width: 2,
+                                lineDash: [5, 5], // Adjust lineDash for zigzag effect
+                            }),
+                        },
+                    },
+                };
+                //vectorSource.addFeature(geoJsonFormat.readFeature(geoJsonFeature));
+
             },
 			error: function (data) {
 				console.log("op error", data);
@@ -88,21 +214,11 @@ $(document).ready(() => {
 
         // Add an event listener for map view changes
         map.on('moveend', updateData);
+		updateData();
 
-        // Initial data update
-        updateData();
-
-	setTimeout(() => {
-		olms.apply(map, 'cycleosm.json').then(function () {
-	 		// Map has been successfully styled with Mapbox style
-		});
-	},500);
-});
-</script>
-
-	
-	<body>
-	<div><span>test</span></div>
-	<div id="map" style="width: 100%; height: calc(100vh - 90px);"></div>
+            // Add the vector layer to the map
+            map.addLayer(vectorLayer);
+        });
+    </script>
 </body>
 </html>
