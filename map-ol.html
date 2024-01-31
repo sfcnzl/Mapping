@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.min.js" integrity="sha512-1/RvZTcCDEUjY/CypiMz+iqqtaoQfAITmNSJY17Myp4Ms5mdxPS5UV7iOfdZoxcGhzFbOm6sntTKJppjvuhg4g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-latest.min.js" integrity="sha512-vs7+jbztHoMto5Yd/yinM4/y2DOkPLt0fATcN+j+G4ANY2z4faIzZIOMkpBmWdcxt+596FemCh9M18NUJTZwvw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
@@ -13,8 +13,17 @@
 <body>
     <script>
         $(document).ready(() => {
-            var k = '(relation["route"="mtb"];relation["route"="bicycle"];way["highway"="cycleway"];);';
-
+            var k = '(relation["route"="mtb"];relation["route"="bicycle"];way["highway"="cycleway"];way["cycleway"="*"];);';
+            var startLat = localStorage.getItem("lat");
+            var startLong = localStorage.getItem("long");
+            var startZoom = localStorage.getItem("zoom");
+            if (startLat == null || startLong == null){
+                startLat = -44;
+                startLong = 173;
+            }
+            if (startZoom == null) {
+                startZoom = 10;
+            }
             var map = new ol.Map({
                 target: 'map',
                 layers: [
@@ -23,8 +32,8 @@
 					}),
                 ],
                 view: new ol.View({
-                    center: ol.proj.fromLonLat([173, -44]),
-                    zoom: 10,
+                    center: ol.proj.fromLonLat([startLong, startLat]),
+                    zoom: startZoom,
                 }),
             });
             window.map = map;
@@ -175,9 +184,9 @@
                     lat_min + ',' + long_min + ',' +
                     lat_max + ',' + long_max +
                     '];' + k + 'out body;>;out skel qt;';
-	
-		console.log("Query", overpassQuery);
-		
+
+ 		console.log("Query", overpassQuery);
+
           $.ajax({
             method: 'POST',
             url: overpassUrl,
@@ -258,6 +267,7 @@
             var newZoom = map.getView().getZoom();
             console.log('Zoom Level Changed:', newZoom);
             // Do something based on the new zoom level
+            localStorage.setItem("zoom", newZoom);
             $("#zoom").text(newZoom);
         }
         map.getView().on('change:resolution', Zoomed);
@@ -266,7 +276,8 @@
         function CenterMove(event) {
             var newCenter = map.getView().getCenter();
             var wgs84Coordinates = ol.proj.transform(newCenter, 'EPSG:3857', 'EPSG:4326');
-
+            localStorage.setItem("lat",wgs84Coordinates[1]);
+            localStorage.setItem("long",wgs84Coordinates[0]);
             console.log('Center Changed:', wgs84Coordinates);
             // Do something based on the new zoom level
             $("#center").text(wgs84Coordinates);
