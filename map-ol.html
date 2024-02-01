@@ -15,6 +15,8 @@
     <script>
         $(document).ready(() => {
             var k = '(relation["route"="mtb"];relation["route"="bicycle"];way["highway"="cycleway"];way["cycleway"="*"];);';
+            var k2 = '(relation["route"="mtb"];relation["route"="bicycle"];way["highway"="cycleway"];way["cycleway"="*"];way["bicycle"="yes"];way["bicycle"="mtb"];way["bicycle"="permissive"];way["bicycle"="offical"];);';
+
             var startLat = localStorage.getItem("lat");
             var startLong = localStorage.getItem("long");
             var startZoom = localStorage.getItem("zoom");
@@ -179,12 +181,17 @@
             long_max = -180 + (long_max - 180);
           }
 
+          var basequery = k;
+          if (map.getView().getZoom() >= 10) {
+            basequery = k2;
+          }
+
           // Use Overpass API to fetch data
           var overpassUrl = 'https://overpass-api.de/api/interpreter';
           var overpassQuery = '[out:json][bbox:' +
                     lat_min + ',' + long_min + ',' +
                     lat_max + ',' + long_max +
-                    '];' + k + 'out body;>;out skel qt;';
+                    '];' + basequery + 'out body;>;out skel qt;';
 
  		console.log("Query", overpassQuery);
 
@@ -308,21 +315,25 @@
             wayFeatures.forEach(w=> 
 				 	{
                         w.getGeometry().transform('EPSG:4326', 'EPSG:3857');
-				 		w.setStyle( [new ol.style.Style({
-    stroke: new ol.style.Stroke({
-      color: 'rgba(255, 0, 0, 1)', // Red color with 100% opacity
-      width: 2, // Width of the narrow red line
-      lineDash: [5, 5], // Adjust lineDash for zigzag effect
-    }),
-  }),
-  new ol.style.Style({
-    stroke: new ol.style.Stroke({
-      color: 'rgba(255, 255, 0, 0.5)', // Yellow color with 50% opacity
-      width: 6, // Width of the wider yellow line
-    }),
-  }),]
-  );
-				 });
+				 		w.setStyle( 
+                            [
+                                new ol.style.Style({
+                                    stroke: new ol.style.Stroke({
+                                        color: 'rgba(255, 0, 0, 1)', // Red color with 100% opacity
+                                        width: 2, // Width of the narrow red line
+                                        lineDash: [5, 5], // Adjust lineDash for zigzag effect
+                                    }),
+                                }),
+                                new ol.style.Style({
+                                    stroke: new ol.style.Stroke({
+                                    color: 'rgba(255, 255, 0, 0.5)', // Yellow color with 50% opacity
+                                    width: 6, // Width of the wider yellow line
+                                    }),
+                                }),
+                            ]
+                        );
+				 }
+            );
             
             // Create a vector source and layer for GPX data
             const gpxVectorSource = new ol.source.Vector({
