@@ -301,16 +301,19 @@
       function handleFileUpload(event) {
         const fileInput = event.target;
         const file = fileInput.files[0];
-
+        console.log("file",file);
         if (file) {
           const reader = new FileReader();
 
           reader.onload = function (e) {
-            // Parse GPX data using osmtogeojson
-            const gpxData = e.target.result;
-            //const geoJsonData = osmtogeojson.gpx(gpxData);
-            const geoJsonData = toGeoJSON.gpx(new DOMParser().parseFromString(gpxData, 'text/xml'));
-        
+            var geoJsonData = "";
+            if (file.type && file.type == "application/gpx+xml") {
+                // Parse GPX data using osmtogeojson
+                const gpxData = e.target.result;
+                geoJsonData = toGeoJSON.gpx(new DOMParser().parseFromString(gpxData, 'text/xml'));
+            } else if (file.type && file.type == "application/geo+json") {
+                geoJsonData = e.target.result;
+            }
             var  wayFeatures = new ol.format.GeoJSON().readFeatures(geoJsonData);
             wayFeatures.forEach(w=> 
 				 	{
@@ -321,7 +324,7 @@
                                     stroke: new ol.style.Stroke({
                                         color: 'rgba(255, 0, 0, 1)', // Red color with 100% opacity
                                         width: 2, // Width of the narrow red line
-                                        lineDash: [5, 5], // Adjust lineDash for zigzag effect
+                                        lineDash: [5, 3,2,3], // Adjust lineDash for zigzag effect
                                     }),
                                 }),
                                 new ol.style.Style({
@@ -360,6 +363,6 @@
     </script>
     <div><span>Center: <span id="center"></span>&nbsp;(WSG84)</span>&nbsp;<span>Zoom: <span id="zoom"></span></span></div>
     <div id="map" style="width: 100%; height: calc(100vh - 90px);"></div>
-    <input type="file" id="fileInput" accept=".gpx" />
+    <input type="file" id="fileInput" accept="application/geo+json,application/gpx+xml" >Import a file</input>
 </body>
 </html>
